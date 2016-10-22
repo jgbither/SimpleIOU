@@ -47,7 +47,22 @@ public class IOUContainer {
     }
 
     public IOU getIOU(UUID id){
+        IOUCursorWrapper cursor = queryIOUs(
+                IOUTable.Cols.UUID + "=?",
+                new String[] {id.toString()}
+        );
 
+        try {
+            if (cursor.getCount() == 0) {
+                return null
+            }
+
+            cursor.moveToFirst();
+            return cursor.getIOU();
+        }
+        finally {
+            cursor.close();
+        }
     }
 
     public void addIOU(IOU iou){
@@ -56,7 +71,9 @@ public class IOUContainer {
     }
 
     public void deleteIOU(UUID id){
-        mDatabase.delete(IOUTable.NAME, IOUTable.Cols.UUID + "=?", new String[] {id.toString()});
+        mDatabase.delete(IOUTable.NAME, IOUTable.Cols.UUID + "=?",
+                new String[] {id.toString()}
+        );
     }
 
     public void updateIOU(IOU iou){
