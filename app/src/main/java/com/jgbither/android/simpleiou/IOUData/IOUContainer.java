@@ -22,9 +22,9 @@ public class IOUContainer {
     private Context mContext;
     private SQLiteDatabase mDatabase;
 
-    public static IOUContainer getIOUContainer() {
+    public static IOUContainer getIOUContainer(Context context) {
         if (mIOUContainer == null) {
-            mIOUContainer = new IOUContainer();
+            mIOUContainer = new IOUContainer(context);
         }
         return mIOUContainer;
     }
@@ -46,6 +46,11 @@ public class IOUContainer {
         return IOUs;
     }
 
+    private IOUContainer (Context context){
+        mContext  = context.getApplicationContext();
+        mDatabase = new IOUDbHelper(mContext).getWritableDatabase();
+    }
+
     public IOU getIOU(UUID id){
         IOUCursorWrapper cursor = queryIOUs(
                 IOUTable.Cols.UUID + "=?",
@@ -54,7 +59,7 @@ public class IOUContainer {
 
         try {
             if (cursor.getCount() == 0) {
-                return null
+                return null;
             }
 
             cursor.moveToFirst();

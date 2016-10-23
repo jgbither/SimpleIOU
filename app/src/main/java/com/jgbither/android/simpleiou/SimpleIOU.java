@@ -22,6 +22,7 @@ import java.util.List;
 public class SimpleIOU extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
+    private IOUAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class SimpleIOU extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.IOU_item_list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        updateUI();
 
     }
 
@@ -64,8 +66,8 @@ public class SimpleIOU extends AppCompatActivity {
         public void bindIOU(IOU iou){
             mIOU = iou;
             mIOUTitle.setText(mIOU.getmTitle());
-            mIOUDate.setText(mIOU.getmDate());
-            mIOUMoney.setText(mIOU.getmMoney());
+            mIOUDate.setText(mIOU.getmDate().toString());
+            mIOUMoney.setText(mIOU.getmMoney().toString());
         }
     }
 
@@ -109,7 +111,15 @@ public class SimpleIOU extends AppCompatActivity {
     }
 
     private void updateUI(){
-        IOUContainer mIOUContainer = IOUContainer.getIOUContainer();
-        List<IOU> mIOUs = mIOUContainer
+        IOUContainer mIOUContainer = IOUContainer.getIOUContainer(this);
+        List<IOU> mIOUs = mIOUContainer.getIOUs();
+
+        if(mAdapter == null){
+            mAdapter = new IOUAdapter(mIOUs);
+            mRecyclerView.setAdapter(mAdapter);
+        }else{
+            mAdapter.setCrimes(mIOUs);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }
